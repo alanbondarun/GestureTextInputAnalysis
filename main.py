@@ -34,6 +34,30 @@ def parse_csv(filepath, header = False):
         linenum += 1
     return line_list
 
+def extract_timed_actions(parsed_values):
+    timed_actions = []
+    for expr_unit in parsed_values:
+        for list_line in expr_unit:
+            timed_actions.append(list_line[-1])
+    return timed_actions
+
+def calculate_keypress_time(timed_actions):
+    keys = []
+    keypress_times = []
+    for timed_action in timed_actions:
+        for i in range(len(timed_action)-1):
+            cinterval = float(timed_action[i+1][0]) - float(timed_action[i][0])
+            if not (timed_action[i+1][1] in keys):
+                keys.append(timed_action[i+1][1])
+                keypress_times.append([cinterval])
+            else:
+                key_idx = keys.index(timed_action[i+1][1])
+                keypress_times[key_idx].append(cinterval)
+
+    result = []
+    for i in range(len(keys)):
+        result.append([keys[i], sum(keypress_times[i]) / len(keypress_times[i])])
+    return result
 
 file_list = [x for x in Path(res_directory).iterdir() if x.is_file()]
 
@@ -45,3 +69,15 @@ for file in file_list:
         ww_parsed_values.append(parse_csv(file))
     elif str(file).endswith(task_1d_filename + file_ext):
         oned_parsed_values.append(parse_csv(file))
+
+ww_timed_actions = extract_timed_actions(ww_parsed_values)
+oned_timed_actions = extract_timed_actions(oned_parsed_values)
+
+ww_keypress_times = calculate_keypress_time(ww_timed_actions)
+ww_keypress_times.sort()
+
+oned_keypress_times = calculate_keypress_time(oned_timed_actions)
+oned_keypress_times.sort()
+
+print([item[1] for item in ww_keypress_times])
+print([item[1] for item in oned_keypress_times])
