@@ -1,6 +1,7 @@
 from pathlib import Path
 from anallib import *
 from motionlib import *
+from keynode import *
 
 file_list = [x for x in Path(res_directory).iterdir() if x.is_file()]
 
@@ -39,6 +40,11 @@ print([item[3] for item in ww_keypress_times])
 print([item[3] for item in oned_keypress_times])
 '''
 
+'''
 for ww_motion_file in ww_motion_values:
     ww_segmented_file = segment_motion_rawdata(ww_motion_file)
     print(ww_segmented_file[0])
+'''
+
+node = KeyNode.loadFromFile("./json/key_value_watch_3area_opt_2.json")
+print(node)

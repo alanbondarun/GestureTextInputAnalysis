@@ -27,6 +27,8 @@ def parse_csv(filepath, header = False, start_from = 1):
 
             line_list.append(value_list)
         linenum += 1
+
+    file.close()
     return line_list
 
 def parse_timed_actions(csv_list):
