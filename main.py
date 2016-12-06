@@ -43,7 +43,16 @@ print([item[3] for item in oned_keypress_times])
 ww_segmented_files = []
 for raw_file in ww_motion_values:
     ww_segmented_files.append(segment_motion_rawdata(raw_file))
+oned_segmented_files = []
+for raw_file in oned_motion_values:
+    oned_segmented_files.append(segment_motion_rawdata(raw_file))
 
 ww_keytree = KeyNode.loadFromFile("./json/key_value_watch_3area_opt_2.json")
+oned_keytree = KeyNode.loadFromFile("./json/key_value_oned_opt.json")
+
+# WatchWrite segment analysis
 print(aggregate_motion_times_rtable(ww_segmented_files, ww_keytree))
+
+# multitouch vs. void part analysis
 print(num_multi_versus_empty(ww_segmented_files, ww_keytree))
+print(num_multi_versus_empty(oned_segmented_files, oned_keytree))
