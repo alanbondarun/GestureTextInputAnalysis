@@ -1,5 +1,8 @@
 # IntelliJ idea file
 /.idea/
 
+# python cache
+/__pycache__/
+
 # resource directory
 /res/
