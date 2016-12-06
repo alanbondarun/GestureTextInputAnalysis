@@ -40,11 +40,10 @@ print([item[3] for item in ww_keypress_times])
 print([item[3] for item in oned_keypress_times])
 '''
 
-
-ww_motion_file = ww_motion_values[2]
-ww_segmented_file = segment_motion_rawdata(ww_motion_file)
+ww_segmented_files = []
+for raw_file in ww_motion_values:
+    ww_segmented_files.append(segment_motion_rawdata(raw_file))
 
 ww_keytree = KeyNode.loadFromFile("./json/key_value_watch_3area_opt_2.json")
-print(analyze_segment(ww_segmented_file[8], ww_keytree))
-print(analyze_segment(ww_segmented_file[9], ww_keytree))
-print(analyze_segment(ww_segmented_file[10], ww_keytree))
+print(aggregate_motion_times_rtable(ww_segmented_files, ww_keytree))
+print(num_multi_versus_empty(ww_segmented_files, ww_keytree))
