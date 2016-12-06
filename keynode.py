@@ -6,6 +6,9 @@ class KeyNode:
         self.children = []
         self.action = ""
 
+    def is_leaf(self):
+        return len(self.children) == 0
+
     @staticmethod
     def createFromDic(dic):
         node = KeyNode()
