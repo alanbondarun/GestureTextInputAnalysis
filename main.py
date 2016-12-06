@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+import statistics
 
 res_directory = "res"
 task_ww_filename = "TaskRecordGlassWatchWriteActivity"
@@ -56,7 +57,12 @@ def calculate_keypress_time(timed_actions):
 
     result = []
     for i in range(len(keys)):
-        result.append([keys[i], sum(keypress_times[i]) / len(keypress_times[i])])
+        values = [keys[i], sum(keypress_times[i]) / len(keypress_times[i]), len(keypress_times[i])]
+        if (len(keypress_times[i]) >= 2):
+            values.append(statistics.stdev(keypress_times[i]))
+        else:
+            values.append(0)
+        result.append(values)
     return result
 
 file_list = [x for x in Path(res_directory).iterdir() if x.is_file()]
@@ -79,5 +85,11 @@ ww_keypress_times.sort()
 oned_keypress_times = calculate_keypress_time(oned_timed_actions)
 oned_keypress_times.sort()
 
+print([item[0] for item in ww_keypress_times])
+print([item[0] for item in oned_keypress_times])
 print([item[1] for item in ww_keypress_times])
 print([item[1] for item in oned_keypress_times])
+print([item[2] for item in ww_keypress_times])
+print([item[2] for item in oned_keypress_times])
+print([item[3] for item in ww_keypress_times])
+print([item[3] for item in oned_keypress_times])
