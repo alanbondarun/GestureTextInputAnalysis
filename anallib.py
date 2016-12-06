@@ -7,12 +7,12 @@ file_ext = ".csv"
 task_ww_filename = "TaskRecordGlassWatchWriteActivity"
 task_1d_filename = "TaskRecordGlassOneDActivity"
 
-def parse_csv(filepath, header = False):
+def parse_csv(filepath, header = False, start_from = 1):
     file = filepath.open()
     line_list = []
     linenum = 0
     for line in file:
-        if (linenum == 0 and header) or linenum > 2:
+        if (linenum == 0 and header) or linenum >= start_from:
             values = line.strip().split("\"")
             value_list = []
             in_str = False
