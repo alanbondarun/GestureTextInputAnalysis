@@ -15,6 +15,8 @@ action_multitouch = 261
 ww_screen_dimens = (213.0, 213.0)
 ww_deadzone_ratio = 0.4
 
+oned_screen_dimens = (1366, 187)
+
 '''
     motion event data: [timestamp:long, x_position:float, y_position:float, action:int]
     convert data type of each motion event data from string to [int, float, float, int]
@@ -42,7 +44,7 @@ def segment_motion_rawdata(raw_list):
 
 # given a coordinate, calculate the area number
 # return: area number in [0, 3), -1 if the touch area is in the dead zone or -2 if out of the touch area
-def touch_area(position):
+def touch_area_ww(position):
     relx = position[0] / ww_screen_dimens[0]
     rely = position[1] / ww_screen_dimens[1]
     if 0 <= relx <= 1 and 0 <= rely <= 1:
@@ -62,6 +64,17 @@ def touch_area(position):
                 return -1
         else:
             return -1
+    return -2
+
+
+# given a coordinate, calculate the area number
+# return: area number in [0, 3), -1 if the touch area is in the dead zone or -2 if out of the touch area
+def touch_area_1d(position):
+    relx = position[0] / oned_screen_dimens[0]
+    if 0 <= relx < 1:
+        return int(relx * 4.0)
+    elif relx >= 1:
+        return 3
     return -2
 
 def motion_from_areas(prev_area, current_area):
@@ -84,7 +97,7 @@ def motion_from_areas(prev_area, current_area):
 # format: [ action, list of timestamps at which position entered to a new,
 #               list of [kind of motion, time interval] ]
 # in the time interval list of motions, the redundant motions are removed (e.g. v -> h -> h for entering 'o')
-def analyze_segment(segment, keytree):
+def analyze_segment_ww(segment, keytree):
     # prune out multitouch segments
     for event in segment:
         if event[3] == action_multitouch:
@@ -96,7 +109,7 @@ def analyze_segment(segment, keytree):
     timestamps = []
     motions = []
     for event in segment:
-        child_idx = touch_area(event[1:3])
+        child_idx = touch_area_ww(event[1:3])
         if child_idx == -1:
             continue
         if prev_idx != child_idx:
@@ -115,12 +128,42 @@ def analyze_segment(segment, keytree):
 
     return [current_node.action, timestamps, motions]
 
+
+# analyze a segment with the given keynode tree
+# format: [action, input_time]
+def analyze_segment_1d(segment, keytree):
+    # prune out multitouch segments
+    for event in segment:
+        if event[3] == action_multitouch:
+            return [label_multitouch, [], []]
+
+    # follow the keynode tree
+    current_node = keytree
+    prev_idxes = []
+    for event in segment:
+        child_idx = touch_area_1d(event[1:3])
+        if child_idx == -1:
+            continue
+        if len(prev_idxes) <= 0 or prev_idxes[-1] != child_idx:
+            if child_idx < 0 or child_idx >= 4:
+                break
+            if current_node.is_leaf():
+                current_node = current_node.parent.children[child_idx]
+            elif len(prev_idxes) >= 2 and (child_idx - prev_idxes[-1]) * (prev_idxes[-1] - prev_idxes[-2]) == 1:
+                current_node = current_node.parent.children[child_idx]
+            else:
+                current_node = current_node.children[child_idx]
+
+            prev_idxes.append(child_idx)
+
+    return [current_node.action, segment[-1][0] - segment[0][0]]
+
 # { key: { 'h': [time intervals], 'v': [time_intervals], 'd': [time_intervals] } }
-def aggregate_motion_times(segmented_files, keytree):
+def aggregate_motion_times_ww(segmented_files, keytree):
     key_dict = {}
     for segment_list in segmented_files:
         for segment in segment_list:
-            anal_res = analyze_segment(segment, keytree)
+            anal_res = analyze_segment_ww(segment, keytree)
             if anal_res[0] in key_dict:
                 for motion_record in anal_res[2]:
                     if motion_record[0] == label_horiz_motion:
@@ -145,10 +188,22 @@ def aggregate_motion_times(segmented_files, keytree):
 
     return key_dict
 
+def aggergate_motion_times_1d(segmented_files, keytree):
+    key_dict = {}
+    for segment_list in segmented_files:
+        for segment in segment_list:
+            anal_res = analyze_segment_1d(segment, keytree)
+            if anal_res[0] in key_dict:
+                key_dict[anal_res[0]].append(anal_res[1])
+            else:
+                key_dict[anal_res[0]] = [anal_res[1]]
+
+    return key_dict
+
 def aggregate_motion_times_rtable(segmented_files, keytree):
     rtable = [['key', 'motion', 'time']]
 
-    motion_times = aggregate_motion_times(segmented_files, keytree)
+    motion_times = aggregate_motion_times_ww(segmented_files, keytree)
     for key in motion_times.keys():
         if key == '' or key == label_multitouch:
             continue
@@ -162,12 +217,15 @@ def aggregate_motion_times_rtable(segmented_files, keytree):
 
 
 # [[num-multi, average-time, stdev], [num-empty, average-time, stdev]]
-def num_multi_versus_empty(segmented_files, keytree):
+def num_multi_versus_empty(segmented_files, keytree, is_oned):
     multi_time_list = []
     null_time_list = []
     for segment_list in segmented_files:
         for segment in segment_list:
-            anal_res = analyze_segment(segment, keytree)
+            if is_oned:
+                anal_res = analyze_segment_1d(segment, keytree)
+            else:
+                anal_res = analyze_segment_ww(segment, keytree)
             if anal_res[0] == label_multitouch:
                 multi_time_list.append(segment[-1][0] - segment[0][0])
             elif anal_res[0] == '':

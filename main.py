@@ -54,5 +54,5 @@ oned_keytree = KeyNode.loadFromFile("./json/key_value_oned_opt.json")
 print(aggregate_motion_times_rtable(ww_segmented_files, ww_keytree))
 
 # multitouch vs. void part analysis
-print(num_multi_versus_empty(ww_segmented_files, ww_keytree))
-print(num_multi_versus_empty(oned_segmented_files, oned_keytree))
+print(num_multi_versus_empty(ww_segmented_files, ww_keytree, False))
+print(num_multi_versus_empty(oned_segmented_files, oned_keytree, True))

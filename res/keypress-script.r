@@ -27,7 +27,12 @@ frame_avgww <- rename(frame_avgww, c("ww_avgtime"="avgtime", "ww_stdev"="stdev",
 
 # plot whole keys
 frame_avg <- rbind(frame_avg1d, frame_avgww)
-ggplot(data=frame_avg, aes(x=input, y=avgtime, fill=group)) +
+ggplot(data=frame_avg1d, aes(x=input, y=avgtime)) +
+  geom_bar(stat="identity", position = position_dodge()) +
+  geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), position=dodge, width=.1) +
+  theme(text = element_text(size=18), axis.text = element_text(size=18), legend.position="bottom")
+  
+ggplot(data=frame_avgww, aes(x=input, y=avgtime)) +
   geom_bar(stat="identity", position = position_dodge()) +
   geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), position=dodge, width=.1) +
   theme(text = element_text(size=18), axis.text = element_text(size=18), legend.position="bottom")
@@ -39,7 +44,7 @@ frame_avgww$bar_width[frame_avgww$depth==2] <- 0.9 * (11/14)
 ggplot(data=frame_avgww, aes(x=input, y=avgtime)) +
   geom_bar(aes(width=bar_width), stat="identity") +
   geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), width=.1) +
-  theme(text = element_text(size=18), axis.text = element_text(size=18)) +
+  theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1)) +
   ylim(0, 8) +
   facet_wrap(~depth, scale="free")
   
@@ -50,7 +55,7 @@ frame_avg1d$bar_width[frame_avg1d$depth==2] <- 0.9 * (11/14)
 ggplot(data=frame_avg1d, aes(x=input, y=avgtime)) +
   geom_bar(aes(width=bar_width), stat="identity") +
   geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), width=.1) +
-  theme(text = element_text(size=18), axis.text = element_text(size=18)) +
+  theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1)) +
   ylim(0, 8) +
   facet_wrap(~depth, scale="free")
   
@@ -66,7 +71,7 @@ frame_avg1d_dist$bar_width[frame_avg1d_dist$distance==5] <- 0.9 * (2/9)
 ggplot(data=frame_avg1d_dist, aes(x=input, y=avgtime)) +
   geom_bar(aes(width=bar_width), stat="identity") +
   geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), width=.1) +
-  theme(text = element_text(size=18), axis.text = element_text(size=18)) +
+  theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1)) +
   ylim(0, 8) +
   facet_wrap(~distance, ncol=5, scale="free")
   
@@ -76,6 +81,9 @@ ggplot(data=motion_sum, aes(x=key, y=time, fill=motion)) +
   geom_bar(stat="identity", position = position_dodge()) +
   geom_errorbar(aes(ymin=time-se, ymax=time+se), position=dodge, width=.1) +
   theme(text = element_text(size=18), axis.text = element_text(size=18), legend.position="bottom")
+
+motion_motion_sum <- summarySE(motion_data, measurevar="time", groupvars=c("motion"))
+
 
 
 
