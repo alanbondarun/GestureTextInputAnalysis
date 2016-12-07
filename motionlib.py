@@ -1,5 +1,6 @@
 # Motion Analysis Module
 import keynode
+import statistics
 
 motion_ww_filename = "MotionRecordWatchInputToGlassActivity"
 motion_1d_filename = "MotionRecordGlassOneDActivity"
@@ -160,18 +161,19 @@ def aggregate_motion_times_rtable(segmented_files, keytree):
     return rtable
 
 
-# (num-multi, num-empty)
+# [[num-multi, average-time, stdev], [num-empty, average-time, stdev]]
 def num_multi_versus_empty(segmented_files, keytree):
-    count = [[0, []], [0, []]]
+    multi_time_list = []
+    null_time_list = []
     for segment_list in segmented_files:
         for segment in segment_list:
             anal_res = analyze_segment(segment, keytree)
             if anal_res[0] == label_multitouch:
-                count[0][0] += 1
-                count[0][1].append(segment[-1][0] - segment[0][0])
+                multi_time_list.append(segment[-1][0] - segment[0][0])
             elif anal_res[0] == '':
-                count[1][0] += 1
-                count[1][1].append(segment[-1][0] - segment[0][0])
-    count[0][1] = sum(count[0][1]) / len(count[0][1])
-    count[1][1] = sum(count[1][1]) / len(count[1][1])
+                null_time_list.append(segment[-1][0] - segment[0][0])
+
+    count = []
+    count.append([len(multi_time_list), sum(multi_time_list) / len(multi_time_list), statistics.stdev(multi_time_list)])
+    count.append([len(null_time_list), sum(null_time_list) / len(null_time_list), statistics.stdev(null_time_list)])
     return count
