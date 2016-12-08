@@ -75,15 +75,6 @@ ggplot(data=frame_avg1d_dist, aes(x=input, y=avgtime)) +
   theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1)) +
   ylim(0, 8) +
   facet_wrap(~distance, ncol=5, scale="free")
-  
-motion_data <- read.csv("E:/documents/16_stable/motto_futari_de/gesture-pilot-exp-v2/res/motion_time.csv", header=T, sep=",")
-motion_sum <- summarySE(motion_data, measurevar="time", groupvars=c("key", "motion"))
-ggplot(data=motion_sum, aes(x=key, y=time, fill=motion)) +
-  geom_bar(stat="identity", position = position_dodge()) +
-  geom_errorbar(aes(ymin=time-se, ymax=time+se), position=dodge, width=.1) +
-  theme(text = element_text(size=18), axis.text = element_text(size=18), legend.position="bottom")
-
-motion_motion_sum <- summarySE(motion_data, measurevar="time", groupvars=c("motion"))
 
 # by-person key press time
 by_person_data <- read.csv("E:/documents/16_stable/motto_futari_de/gesture-pilot-exp-v2/res/keytime-by-person.csv", header=T, sep=",")

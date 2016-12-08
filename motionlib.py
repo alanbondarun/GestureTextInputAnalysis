@@ -123,7 +123,8 @@ def analyze_segment_ww(segment, keytree):
             else:
                 current_node = current_node.children[child_idx]
                 if len(timestamps) >= 2:
-                    motions.append([motion_from_areas(prev_idx, child_idx), event[0] - timestamps[-2]])
+                    len_motions = len(motions) + 1
+                    motions.append([motion_from_areas(prev_idx, child_idx) + str(len_motions), event[0] - timestamps[-2]])
             prev_idx = child_idx
 
     return [current_node.action, timestamps, motions]
@@ -166,22 +167,22 @@ def aggregate_motion_times_ww(segmented_files, keytree):
             anal_res = analyze_segment_ww(segment, keytree)
             if anal_res[0] in key_dict:
                 for motion_record in anal_res[2]:
-                    if motion_record[0] == label_horiz_motion:
+                    if motion_record[0][:len(label_horiz_motion)] == label_horiz_motion:
                         key_dict[anal_res[0]][label_horiz_motion].append(motion_record[1])
-                    elif motion_record[0] == label_verti_motion:
+                    elif motion_record[0][:len(label_verti_motion)] == label_verti_motion:
                         key_dict[anal_res[0]][label_verti_motion].append(motion_record[1])
-                    elif motion_record[0] == label_diag_motion:
+                    elif motion_record[0][:len(label_diag_motion)] == label_diag_motion:
                         key_dict[anal_res[0]][label_diag_motion].append(motion_record[1])
             else:
                 horizs = []
                 verts = []
                 diags = []
                 for motion_record in anal_res[2]:
-                    if motion_record[0] == label_horiz_motion:
+                    if motion_record[0][:len(label_horiz_motion)] == label_horiz_motion:
                         horizs.append(motion_record[1])
-                    elif motion_record[0] == label_verti_motion:
+                    elif motion_record[0][:len(label_verti_motion)] == label_verti_motion:
                         verts.append(motion_record[1])
-                    elif motion_record[0] == label_diag_motion:
+                    elif motion_record[0][:len(label_diag_motion)] == label_diag_motion:
                         diags.append(motion_record[1])
                 key_dict[anal_res[0]] = { label_horiz_motion: horizs, label_verti_motion: verts,
                                           label_diag_motion: diags }
@@ -203,16 +204,11 @@ def aggergate_motion_times_1d(segmented_files, keytree):
 def aggregate_motion_times_rtable(segmented_files, keytree):
     rtable = [['key', 'motion', 'time']]
 
-    motion_times = aggregate_motion_times_ww(segmented_files, keytree)
-    for key in motion_times.keys():
-        if key == '' or key == label_multitouch:
-            continue
-        for timeval in motion_times[key][label_horiz_motion]:
-            rtable.append([key, label_horiz_motion, timeval])
-        for timeval in motion_times[key][label_verti_motion]:
-            rtable.append([key, label_verti_motion, timeval])
-        for timeval in motion_times[key][label_diag_motion]:
-            rtable.append([key, label_diag_motion, timeval])
+    for segment_list in segmented_files:
+        for segment in segment_list:
+            anal_res = analyze_segment_ww(segment, keytree)
+            for motion_record in anal_res[2]:
+                rtable.append([anal_res[0], motion_record[0], motion_record[1]])
     return rtable
 
 
