@@ -12,9 +12,9 @@ oned_motion_values = []
 
 for file in file_list:
     if str(file).endswith(task_ww_filename + file_ext):
-        ww_parsed_values.append(parse_timed_actions(parse_csv(file, start_from=3)))
+        ww_parsed_values.append(postprocess_task_values(parse_csv(file, start_from=3)))
     elif str(file).endswith(task_1d_filename + file_ext):
-        oned_parsed_values.append(parse_timed_actions(parse_csv(file, start_from=3)))
+        oned_parsed_values.append(postprocess_task_values(parse_csv(file, start_from=3)))
     elif str(file).endswith(motion_ww_filename + file_ext):
         ww_motion_values.append(convert_to_numeric(parse_csv(file)))
     elif str(file).endswith(motion_1d_filename + file_ext):
@@ -29,6 +29,7 @@ ww_keypress_times.sort()
 oned_keypress_times = calculate_keypress_time(oned_timed_actions)
 oned_keypress_times.sort()
 
+# aggregate all blocks & people and generate key press time information
 '''
 print([item[0] for item in ww_keypress_times])
 print([item[0] for item in oned_keypress_times])
@@ -40,6 +41,8 @@ print([item[3] for item in ww_keypress_times])
 print([item[3] for item in oned_keypress_times])
 '''
 
+# group timed actions by people and generate key press time information
+'''
 ww_keytime_by_person = []
 for ta_by_person in extract_timed_actions(ww_parsed_values, by_person = True):
     ww_keytime_by_person.append(calculate_keypress_time(ta_by_person))
@@ -49,7 +52,24 @@ for ta_by_person in extract_timed_actions(oned_parsed_values, by_person = True):
 
 print(ww_keytime_by_person)
 print(oned_keytime_by_person)
+'''
 
+# group timed actions by block and generate key press time information
+'''
+ww_keytime_by_block = []
+for ta_by_block in extract_timed_actions_byblock(ww_parsed_values):
+    ww_keytime_by_block.append(calculate_keypress_time(ta_by_block))
+oned_keytime_by_block = []
+for ta_by_block in extract_timed_actions_byblock(oned_parsed_values):
+    oned_keytime_by_block.append(calculate_keypress_time(ta_by_block))
+
+print(ww_keytime_by_block[0])
+print(ww_keytime_by_block[-1])
+print(oned_keytime_by_block[0])
+print(oned_keytime_by_block[-1])
+'''
+
+# calculate error rates of each input character across all blocks and people
 '''
 print(aggregate_errors(ww_parsed_values))
 print(aggregate_errors(oned_parsed_values))

@@ -7,6 +7,8 @@ file_ext = ".csv"
 task_ww_filename = "TaskRecordGlassWatchWriteActivity"
 task_1d_filename = "TaskRecordGlassOneDActivity"
 
+TASK_PER_BLOCK = 5
+
 def parse_csv(filepath, header = False, start_from = 1):
     file = filepath.open()
     line_list = []
@@ -40,6 +42,18 @@ def parse_timed_actions(csv_list):
         csv_line.append(timed_actions)
     return csv_list
 
+# add block number as the last 4th element of each task
+# assumption: each block has 5 tasks
+def add_block_num(csv_list):
+    linenum = 0
+    for csv_line in csv_list:
+        csv_line.insert(-3, (linenum // TASK_PER_BLOCK) + 1)
+        linenum += 1
+    return csv_list
+
+def postprocess_task_values(csv_list):
+    return add_block_num(parse_timed_actions(csv_list))
+
 def extract_timed_actions(parsed_values, by_person = False):
     timed_actions = []
     for expr_unit in parsed_values:
@@ -53,7 +67,22 @@ def extract_timed_actions(parsed_values, by_person = False):
                 timed_actions.append(list_line[-1])
     return timed_actions
 
+def extract_timed_actions_byblock(parsed_values):
+    block_max = 0
+    for expr_unit in parsed_values:
+        for expr_task in expr_unit:
+            block_max = max(block_max, expr_task[-4])
+
+    block_timed_actions = [[] for x in range(block_max)]
+    for expr_unit in parsed_values:
+        for expr_task in expr_unit:
+            if expr_task[-4] - 1 >= 0:
+                block_timed_actions[ expr_task[-4] - 1 ].append(expr_task[-1])
+
+    return block_timed_actions
+
 # list of [ key name, average input time, number of key inputs, stdev of input time ]
+# param: timed_actions (list of (list of pair of input character and its timestamp))
 def calculate_keypress_time(timed_actions):
     keys = []
     keypress_times = []

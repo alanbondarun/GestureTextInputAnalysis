@@ -110,4 +110,29 @@ ggplot(data = byp_ww, aes(x = input, y = avgtime, fill = person)) +
   theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1), legend.position = "none") +
   facet_wrap(~depth, scale="free")
 
+# by-block key press time
+by_block_data <- read.csv("E:/documents/16_stable/motto_futari_de/gesture-pilot-exp-v2/res/keytime-by-block.csv", header=T, sep=",")
+byb_1d <- by_block_data[ which(by_block_data$method == '1DInput'),
+  c('block', 'input', 'avgtime', 'stdev', 'depth') ]
+byb_ww <- by_block_data[ which(by_block_data$method == '4KWatchWrite'),
+  c('block', 'input', 'avgtime', 'stdev', 'depth') ]
+
+# plot by-block key press time (1D Input)
+ggplot(data = byb_1d, aes(x = input, y = avgtime, group = block, fill = block)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_x_discrete(name = "Input Character") +
+  scale_y_continuous(name = "Average Input Time (sec)", limits = c(0, 8)) +
+  geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), position = dodge, width=.1) +
+  theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1), legend.position = "none") +
+  facet_wrap(~depth, scale="free")
+
+# plot by-person key press time (WatchWrite)
+ggplot(data = byb_ww, aes(x = input, y = avgtime, group = block, fill = block)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_x_discrete(name = "Input Character") +
+  scale_y_continuous(name = "Average Input Time (sec)", limits = c(0, 8)) +
+  geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), position = dodge, width=.1) +
+  theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1), legend.position = "none") +
+  facet_wrap(~depth, scale="free")
+
 
