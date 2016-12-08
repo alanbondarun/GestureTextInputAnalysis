@@ -40,13 +40,20 @@ def parse_timed_actions(csv_list):
         csv_line.append(timed_actions)
     return csv_list
 
-def extract_timed_actions(parsed_values):
+def extract_timed_actions(parsed_values, by_person = False):
     timed_actions = []
     for expr_unit in parsed_values:
-        for list_line in expr_unit:
-            timed_actions.append(list_line[-1])
+        if by_person:
+            expr_timed_action = []
+            for list_line in expr_unit:
+                expr_timed_action.append(list_line[-1])
+            timed_actions.append(expr_timed_action)
+        else:
+            for list_line in expr_unit:
+                timed_actions.append(list_line[-1])
     return timed_actions
 
+# list of [ key name, average input time, number of key inputs, stdev of input time ]
 def calculate_keypress_time(timed_actions):
     keys = []
     keypress_times = []

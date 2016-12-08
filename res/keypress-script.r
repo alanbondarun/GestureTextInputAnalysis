@@ -15,6 +15,7 @@ library(grid)
 oned_name <- "1DInput"
 ww_name <- "4KWatchWrite"
 dodge <- position_dodge(width = 0.9)
+grouped_bar_width <- 0.9
 
 input_data <- read.csv("E:/documents/16_stable/motto_futari_de/gesture-pilot-exp-v2/res/keypress_time.csv", header=T, sep=",")
 
@@ -84,6 +85,29 @@ ggplot(data=motion_sum, aes(x=key, y=time, fill=motion)) +
 
 motion_motion_sum <- summarySE(motion_data, measurevar="time", groupvars=c("motion"))
 
+# by-person key press time
+by_person_data <- read.csv("E:/documents/16_stable/motto_futari_de/gesture-pilot-exp-v2/res/keytime-by-person.csv", header=T, sep=",")
+byp_1d <- by_person_data[ which(by_person_data$method == '1DInput'),
+  c('person', 'input', 'avgtime', 'stdev', 'depth') ]
+byp_ww <- by_person_data[ which(by_person_data$method == '4KWatchWrite'),
+  c('person', 'input', 'avgtime', 'stdev', 'depth') ]
 
+# plot by-person key press time (1D Input)
+ggplot(data = byp_1d, aes(x = input, y = avgtime, fill = person)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_x_discrete(name = "Input Character") +
+  scale_y_continuous(name = "Average Input Time (sec)", limits = c(0, 8)) +
+  geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), position = dodge, width=.1) +
+  theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1), legend.position = "none") +
+  facet_wrap(~depth, scale="free")
+
+# plot by-person key press time (WatchWrite)
+ggplot(data = byp_ww, aes(x = input, y = avgtime, fill = person)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_x_discrete(name = "Input Character") +
+  scale_y_continuous(name = "Average Input Time (sec)", limits = c(0, 8)) +
+  geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), position = dodge, width=.1) +
+  theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1), legend.position = "none") +
+  facet_wrap(~depth, scale="free")
 
 

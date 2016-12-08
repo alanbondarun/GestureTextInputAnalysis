@@ -40,8 +40,20 @@ print([item[3] for item in ww_keypress_times])
 print([item[3] for item in oned_keypress_times])
 '''
 
+ww_keytime_by_person = []
+for ta_by_person in extract_timed_actions(ww_parsed_values, by_person = True):
+    ww_keytime_by_person.append(calculate_keypress_time(ta_by_person))
+oned_keytime_by_person = []
+for ta_by_person in extract_timed_actions(oned_parsed_values, by_person = True):
+    oned_keytime_by_person.append(calculate_keypress_time(ta_by_person))
+
+print(ww_keytime_by_person)
+print(oned_keytime_by_person)
+
+'''
 print(aggregate_errors(ww_parsed_values))
 print(aggregate_errors(oned_parsed_values))
+'''
 
 ww_segmented_files = []
 for raw_file in ww_motion_values:
