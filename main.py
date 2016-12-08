@@ -40,6 +40,9 @@ print([item[3] for item in ww_keypress_times])
 print([item[3] for item in oned_keypress_times])
 '''
 
+print(aggregate_errors(ww_parsed_values))
+print(aggregate_errors(oned_parsed_values))
+
 ww_segmented_files = []
 for raw_file in ww_motion_values:
     ww_segmented_files.append(segment_motion_rawdata(raw_file))

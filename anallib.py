@@ -69,3 +69,92 @@ def calculate_keypress_time(timed_actions):
             values.append(0)
         result.append(values)
     return result
+
+def get_uncorrected_errors(expected_str, input_str):
+    nums = [[0 for x in range(len(input_str) + 1)] for y in range(len(expected_str) + 1)]
+    commands = [[0 for x in range(len(input_str) + 1)] for y in range(len(expected_str) + 1)]
+    cmd_insert = 1
+    cmd_delete = 2
+    cmd_correct = 3
+    cmd_modify = 0
+
+    for i in range(1, len(expected_str) + 1):
+        nums[i][0] = i
+        commands[i][0] = cmd_insert
+    for j in range(1, len(input_str) + 1):
+        nums[0][j] = j
+        commands[0][j] = cmd_delete
+    for i in range(1, len(expected_str) + 1):
+        for j in range(1, len(input_str) + 1):
+            if expected_str[i-1] == input_str[j-1]:
+                nums[i][j] = nums[i-1][j-1]
+                commands[i][j] = cmd_correct
+            else:
+                minval = min(nums[i-1][j], nums[i][j-1], nums[i-1][j-1])
+                if minval == nums[i-1][j]:
+                    nums[i][j] = nums[i-1][j] + 1
+                    commands[i][j] = cmd_insert
+                elif minval == nums[i][j-1]:
+                    nums[i][j] = nums[i][j-1] + 1
+                    commands[i][j] = cmd_delete
+                else:
+                    nums[i][j] = nums[i-1][j-1] + 1
+                    commands[i][j] = cmd_modify
+
+    pos_i = len(expected_str)
+    pos_j = len(input_str)
+    dict_error = {}
+    while pos_i > 0 and pos_j > 0:
+        if commands[pos_i][pos_j] == cmd_correct:
+            pos_i -= 1
+            pos_j -= 1
+        elif commands[pos_i][pos_j] == cmd_insert:
+            pos_i -= 1
+        elif commands[pos_i][pos_j] == cmd_delete:
+            pos_j -= 1
+            if input_str[pos_j] not in dict_error:
+                dict_error[input_str[pos_j]] = 1
+            else:
+                dict_error[input_str[pos_j]] += 1
+        else:
+            pos_i -= 1
+            pos_j -= 1
+            if input_str[pos_j] not in dict_error:
+                dict_error[input_str[pos_j]] = 1
+            else:
+                dict_error[input_str[pos_j]] += 1
+    while pos_j > 0:
+        pos_j -= 1
+        if input_str[pos_j] not in dict_error:
+            dict_error[input_str[pos_j]] = 1
+        else:
+            dict_error[input_str[pos_j]] += 1
+
+    return dict_error
+
+# dictionary of [num-keys, num-corrected-errors, num-uncorrected-errors]
+def aggregate_errors(keypress_files):
+    keys = {}
+    for keypress_file in keypress_files:
+        for keypress_sentence in keypress_file:
+            timed_actions = keypress_sentence[-1]
+            input_str = ""
+            for i in range(len(timed_actions)):
+                if timed_actions[i][1] == 'cancel':
+                    continue
+                if timed_actions[i][1] == 'del':
+                    if len(input_str) > 0:
+                        keys[input_str[-1]][1] += 1
+                        input_str = input_str[:-1]
+                elif timed_actions[i][1] not in keys:
+                    keys[timed_actions[i][1]] = [1, 0, 0]
+                    input_str += timed_actions[i][1]
+                else:
+                    keys[timed_actions[i][1]][0] += 1
+                    input_str += timed_actions[i][1]
+
+            uncorrect_dict = get_uncorrected_errors(keypress_sentence[-3], keypress_sentence[-2])
+            for key in uncorrect_dict:
+                keys[key][2] += 1
+
+    return keys
