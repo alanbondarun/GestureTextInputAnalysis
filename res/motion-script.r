@@ -12,8 +12,12 @@ ggplot(data=motion_sum, aes(x=key, y=time, fill=motion)) +
   geom_bar(stat="identity", position = position_dodge()) +
   geom_errorbar(aes(ymin=time-se, ymax=time+se), position=dodge, width=.1) +
   scale_fill_manual(values = c("d1" = "#00cc99", "d2" = "#008060", "h1" = "#9966ff", "h2" = "#5500ff", "v1" = "#ff8000", "v2" = "#b35900")) +
-  theme(text = element_text(size=18), axis.text = element_text(size=18), legend.position="bottom")
+  scale_x_discrete(name = "Input Character") +
+  scale_y_continuous(name = "Average Input Time (msec)") +
+  theme(text = element_text(size=18), axis.text = element_text(size=18), legend.position="none")
 
 motion_motion_sum <- summarySE(motion_data, measurevar="time", groupvars=c("motion"))
+
+
 
 

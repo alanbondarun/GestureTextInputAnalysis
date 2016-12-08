@@ -45,8 +45,9 @@ frame_avgww$bar_width[frame_avgww$depth==2] <- 0.9 * (11/14)
 ggplot(data=frame_avgww, aes(x=input, y=avgtime)) +
   geom_bar(aes(width=bar_width), stat="identity") +
   geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), width=.1) +
+  scale_x_discrete(name = "Input Character") +
+  scale_y_continuous(name = "Average Input Time (sec)", limits = c(0, 8)) +
   theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1)) +
-  ylim(0, 8) +
   facet_wrap(~depth, scale="free")
   
 # group keys by depth (1D Input)
@@ -56,8 +57,9 @@ frame_avg1d$bar_width[frame_avg1d$depth==2] <- 0.9 * (11/14)
 ggplot(data=frame_avg1d, aes(x=input, y=avgtime)) +
   geom_bar(aes(width=bar_width), stat="identity") +
   geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), width=.1) +
+  scale_x_discrete(name = "Input Character") +
+  scale_y_continuous(name = "Average Input Time (sec)", limits = c(0, 8)) +
   theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1)) +
-  ylim(0, 8) +
   facet_wrap(~depth, scale="free")
   
 # group keys by distance (# of passed areas for each input)
@@ -72,8 +74,9 @@ frame_avg1d_dist$bar_width[frame_avg1d_dist$distance==5] <- 0.9 * (2/9)
 ggplot(data=frame_avg1d_dist, aes(x=input, y=avgtime)) +
   geom_bar(aes(width=bar_width), stat="identity") +
   geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), width=.1) +
+  scale_x_discrete(name = "Input Character") +
+  scale_y_continuous(name = "Average Input Time (sec)", limits = c(0, 8)) +
   theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1)) +
-  ylim(0, 8) +
   facet_wrap(~distance, ncol=5, scale="free")
 
 # by-person key press time
@@ -125,5 +128,7 @@ ggplot(data = byb_ww, aes(x = input, y = avgtime, group = block, fill = block)) 
   geom_errorbar(aes(ymin=avgtime-stdev, ymax=avgtime+stdev), position = dodge, width=.1) +
   theme(text = element_text(size=28), axis.text = element_text(size=28), axis.text.x = element_text(angle=45, hjust=1), legend.position = "none") +
   facet_wrap(~depth, scale="free")
+
+
 
 
