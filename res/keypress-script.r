@@ -84,16 +84,6 @@ ggplot(data=motion_sum, aes(x=key, y=time, fill=motion)) +
 
 motion_motion_sum <- summarySE(motion_data, measurevar="time", groupvars=c("motion"))
 
-key_error_data <- read.csv("E:/documents/16_stable/motto_futari_de/gesture-pilot-exp-v2/res/key-error.csv", header=T, sep=",")
 
-key_error_1d <- key_error_data[which(key_error_data$method=='1DInput'),c("input","terrrate")]
-ggplot(data=key_error_1d, aes(x=input, y=terrrate)) +
-  geom_bar(stat="identity", position = position_dodge()) +
-  theme(text = element_text(size=28), axis.text = element_text(size=28), legend.position="bottom")
-  
-key_error_ww <- key_error_data[which(key_error_data$method=='4KWatchWrite'),c("input","terrrate")]
-ggplot(data=key_error_ww, aes(x=input, y=terrrate)) +
-  geom_bar(stat="identity", position = position_dodge()) +
-  theme(text = element_text(size=28), axis.text = element_text(size=28), legend.position="bottom")
-  
+
 
