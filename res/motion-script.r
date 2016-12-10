@@ -18,6 +18,7 @@ ggplot(data=motion_sum, aes(x=key, y=time, fill=motion)) +
 
 motion_motion_sum <- summarySE(motion_data, measurevar="time", groupvars=c("motion"))
 
-
+m_detailed_data <- read.csv("E:/documents/16_stable/motto_futari_de/gesture-pilot-exp-v2/res/motion-time-detailed.csv", header=T, sep=",")
+m_detailed_sum <- summarySE(m_detailed_data, measurevar="time", groupvars=c("motion"))
 
 

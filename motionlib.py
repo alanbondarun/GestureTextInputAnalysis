@@ -10,6 +10,12 @@ label_multitouch = "multitouch"
 label_horiz_motion = "h"
 label_verti_motion = "v"
 label_diag_motion = "d"
+label_ww_motion = {
+    (0, 1): label_horiz_motion + "l", (0, 2): label_verti_motion + "b", (0, 3): label_diag_motion + "a",
+    (1, 0): label_horiz_motion + "r", (1, 2): label_diag_motion + "c", (1, 3): label_verti_motion + "b",
+    (2, 0): label_verti_motion + "t", (2, 1): label_diag_motion + "d", (2, 3): label_horiz_motion + "l",
+    (3, 0): label_diag_motion + "e", (3, 1): label_verti_motion + "t", (3, 2): label_horiz_motion + "r"
+}
 action_multitouch = 261
 
 ww_screen_dimens = (213.0, 213.0)
@@ -77,21 +83,14 @@ def touch_area_1d(position):
         return 3
     return -2
 
-def motion_from_areas(prev_area, current_area):
+def ww_motion_from_areas(prev_area, current_area):
     if not (0 <= prev_area < 4):
         return None
     if not (0 <= current_area < 4):
         return None
     if prev_area == current_area:
         return None
-
-    if abs(prev_area - current_area) == 1:
-        if (prev_area == 1 and current_area == 2) or (prev_area == 2 and current_area == 1):
-            return label_diag_motion
-        return label_horiz_motion
-    if abs(prev_area - current_area) == 2:
-        return label_verti_motion
-    return label_diag_motion
+    return label_ww_motion[(prev_area, current_area)]
 
 # analyze a segment with the given keynode tree
 # format: [ action, list of timestamps at which position entered to a new,
@@ -124,7 +123,7 @@ def analyze_segment_ww(segment, keytree):
                 current_node = current_node.children[child_idx]
                 if len(timestamps) >= 2:
                     len_motions = len(motions) + 1
-                    motions.append([motion_from_areas(prev_idx, child_idx) + str(len_motions), event[0] - timestamps[-2]])
+                    motions.append([ww_motion_from_areas(prev_idx, child_idx) + str(len_motions), event[0] - timestamps[-2]])
             prev_idx = child_idx
 
     return [current_node.action, timestamps, motions]
