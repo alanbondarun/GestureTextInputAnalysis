@@ -12,9 +12,9 @@ label_verti_motion = "v"
 label_diag_motion = "d"
 label_ww_motion = {
     (0, 1): label_horiz_motion + "l", (0, 2): label_verti_motion + "b", (0, 3): label_diag_motion + "a",
-    (1, 0): label_horiz_motion + "r", (1, 2): label_diag_motion + "c", (1, 3): label_verti_motion + "b",
-    (2, 0): label_verti_motion + "t", (2, 1): label_diag_motion + "d", (2, 3): label_horiz_motion + "l",
-    (3, 0): label_diag_motion + "e", (3, 1): label_verti_motion + "t", (3, 2): label_horiz_motion + "r"
+    (1, 0): label_horiz_motion + "r", (1, 2): label_diag_motion + "b", (1, 3): label_verti_motion + "b",
+    (2, 0): label_verti_motion + "t", (2, 1): label_diag_motion + "c", (2, 3): label_horiz_motion + "l",
+    (3, 0): label_diag_motion + "d", (3, 1): label_verti_motion + "t", (3, 2): label_horiz_motion + "r"
 }
 action_multitouch = 261
 

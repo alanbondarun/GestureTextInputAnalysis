@@ -2,6 +2,7 @@ from pathlib import Path
 from anallib import *
 from motionlib import *
 from keynode import *
+from key_assign import *
 
 file_list = [x for x in Path(res_directory).iterdir() if x.is_file()]
 
@@ -86,8 +87,28 @@ ww_keytree = KeyNode.loadFromFile("./json/key_value_watch_3area_opt_2.json")
 oned_keytree = KeyNode.loadFromFile("./json/key_value_oned_opt.json")
 
 # WatchWrite segment analysis
+'''
 print(aggregate_motion_times_rtable(ww_segmented_files, ww_keytree))
+'''
 
 # multitouch vs. void part analysis
+'''
 print(num_multi_versus_empty(ww_segmented_files, ww_keytree, False))
 print(num_multi_versus_empty(oned_segmented_files, oned_keytree, True))
+'''
+
+# key assignment
+print(ww_key_assign(
+    {
+        'e': 12.02, 't': 9.10, 'a': 8.12, 'o': 7.68, 'i': 7.31, 'n': 6.95, 's': 6.28, 'r': 6.02,
+        'h': 5.92, 'd': 4.32, 'l': 3.98, 'u': 2.88, 'c': 2.71, 'm': 2.61, 'f': 2.30, 'y': 2.11,
+        'w': 2.09, 'g': 2.03, 'p': 1.82, 'b': 1.49, 'v': 1.11, 'k': 0.69, 'x': 0.17, 'q': 0.11,
+        'j': 0.10, 'z': 0.07
+    },
+    {
+        'da1': 1213.38, 'db1': 746.22, 'dc1': 961.36, 'dd1': 1131.00,
+        'da2': 1213.38, 'db2': 746.22, 'dc2': 961.36, 'dd2': 1131.00,
+        'hl1': 901.51, 'hr1': 773.46, 'vb1': 741.38, 'vt1': 896.92,
+        'hl2': 691.05, 'hr2': 684.87, 'vb2': 643.62, 'vt2': 668.75
+    }
+))
