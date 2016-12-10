@@ -91,13 +91,19 @@ oned_keytree = KeyNode.loadFromFile("./json/key_value_oned_opt.json")
 print(aggregate_motion_times_rtable(ww_segmented_files, ww_keytree))
 '''
 
+# OneD segment analysis
+'''
+print(aggregate_motion_times_rtable_1d(oned_segmented_files, oned_keytree))
+'''
+
 # multitouch vs. void part analysis
 '''
 print(num_multi_versus_empty(ww_segmented_files, ww_keytree, False))
 print(num_multi_versus_empty(oned_segmented_files, oned_keytree, True))
 '''
 
-# key assignment
+# WW key assignment
+'''
 print(ww_key_assign(
     {
         'e': 12.02, 't': 9.10, 'a': 8.12, 'o': 7.68, 'i': 7.31, 'n': 6.95, 's': 6.28, 'r': 6.02,
@@ -110,5 +116,24 @@ print(ww_key_assign(
         'da2': 1213.38, 'db2': 746.22, 'dc2': 961.36, 'dd2': 1131.00,
         'hl1': 901.51, 'hr1': 773.46, 'vb1': 741.38, 'vt1': 896.92,
         'hl2': 691.05, 'hr2': 684.87, 'vb2': 643.62, 'vt2': 668.75
+    }
+))
+'''
+
+# OneD key assignment
+print(oned_key_assign(
+    {
+        'e': 12.02, 't': 9.10, 'a': 8.12, 'o': 7.68, 'i': 7.31, 'n': 6.95, 's': 6.28, 'r': 6.02,
+        'h': 5.92, 'd': 4.32, 'l': 3.98, 'u': 2.88, 'c': 2.71, 'm': 2.61, 'f': 2.30, 'y': 2.11,
+        'w': 2.09, 'g': 2.03, 'p': 1.82, 'b': 1.49, 'v': 1.11, 'k': 0.69, 'x': 0.17, 'q': 0.11,
+        'j': 0.10, 'z': 0.07
+    },
+    {
+        '1a1': 500.6154, '1a2': 485.5200, '1b1': 680.2454, '1b2': 472.8000,
+        '1c1': 652.4061, '1c2': 536.3333, '1d1': 612.7473, '1d2': 621.8120,
+        '1e1': 702.6050, '1e2': 702.6050, '1f1': 545.2131, '1f2': 545.2131,
+        '2a1': 705.7717, '2a2': 607.6667, '2b1': 789.0744, '2b2': 899.8788,
+        '2c1': 922.2558, '2c2': 802.7258, '2d1': 776.3750, '2d2': 776.3750,
+        '3a1': 1071.7755, '3a2': 1071.7755, '3b1': 1071.7755, '3b2': 1071.7755
     }
 ))
