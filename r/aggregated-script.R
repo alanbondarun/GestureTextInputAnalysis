@@ -6,7 +6,10 @@ library(ggplot2)
 # install.packages("Rmisc")
 library(Rmisc)
 
-input_data <- read.csv("E:/documents/16_stable/motto_futari_de/gesture-pilot-exp-v2/aggregated.csv", header=T, sep=",")
+filepath = "v3-res"
+filename = "aggregated.csv"
+
+input_data <- read.csv(paste(filepath, filename, sep="/"), header=T, sep=",")
 
 # WPM plot
 wpm_frame <- input_data[,c("Method", "Person", "Block", "WPM")]
@@ -94,3 +97,4 @@ t.test(TER ~ Block, data=ter_b1n6_ww)
 
 # are there any significant differences between means of Method categories?
 t.test(TER ~ Method, data=ter_b6)
+
