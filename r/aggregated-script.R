@@ -15,10 +15,12 @@ input_data <- read.csv(paste(filepath, filename, sep="/"), header=T, sep=",")
 wpm_frame <- input_data[,c("Method", "Person", "Block", "WPM")]
 wpm_smm <- summarySE(wpm_frame, measurevar="WPM", groupvars=c("Method", "Block"))
 ggplot(wpm_smm, aes(x=Block, y=WPM, colour=Method)) +
-	geom_errorbar(aes(ymin=WPM-se, ymax=WPM+se), width=.1) +
-	geom_line() +
-	geom_point() +
-	theme(text = element_text(size=18), axis.text = element_text(size=14), legend.position="bottom")
+    geom_errorbar(aes(ymin=WPM-se, ymax=WPM+se), width=.1) +
+    geom_line() +
+    geom_point() +
+    scale_x_continuous(name = "Block Number") +
+    scale_y_continuous(name = "WPM") +
+    theme(text = element_text(size=18), axis.text = element_text(size=14), legend.position="bottom")
 
 wpm_b6 <- wpm_frame[ which(wpm_frame$Block==6), c("Method", "WPM") ]
 aggregate(wpm_b6$WPM, list(wpm_b6$Method), mean)
@@ -44,10 +46,12 @@ t.test(WPM ~ Method, data=wpm_b6)
 cer_frame <- input_data[,c("Method", "Person", "Block", "CER")]
 cer_smm <- summarySE(cer_frame, measurevar="CER", groupvars=c("Method", "Block"))
 ggplot(cer_smm, aes(x=Block, y=CER, colour=Method)) +
-	geom_errorbar(aes(ymin=CER-se, ymax=CER+se), width=.1) +
-	geom_line() +
-	geom_point() +
-	theme(text = element_text(size=18), axis.text = element_text(size=14), legend.position="bottom")
+    geom_errorbar(aes(ymin=CER-se, ymax=CER+se), width=.1) +
+    geom_line() +
+    geom_point() +
+    scale_x_continuous(name = "Block Number") +
+    scale_y_continuous(name = "CER (ratio)", limits = c(0, 0.30)) +
+    theme(text = element_text(size=18), axis.text = element_text(size=14), legend.position="bottom")
 
 cer_b6 <- cer_frame[ which(cer_frame$Block==6), c("Method", "CER") ]
 aggregate(cer_b6$CER, list(cer_b6$Method), mean)
@@ -69,15 +73,17 @@ t.test(CER ~ Block, data=cer_b1n6_ww)
 t.test(CER ~ Method, data=cer_b6)
 
 # TER (CER + UER) plot and one-way ANOVA (Not corrected error rate)
-ter <- input_data["CER"] + input_data["NER"]
+ter <- input_data["CER"] + input_data["UER"]
 ter_frame <- input_data[,c("Method", "Person", "Block")]
 ter_frame["TER"] <- ter
 ter_smm <- summarySE(ter_frame, measurevar="TER", groupvars=c("Method", "Block"))
 ggplot(ter_smm, aes(x=Block, y=TER, colour=Method)) +
-	geom_errorbar(aes(ymin=TER-se, ymax=TER+se), width=.1) +
-	geom_line() +
-	geom_point() +
-	theme(text = element_text(size=18), axis.text = element_text(size=14), legend.position="bottom")
+    geom_errorbar(aes(ymin=TER-se, ymax=TER+se), width=.1) +
+    geom_line() +
+    geom_point() +
+    scale_x_continuous(name = "Block Number") +
+    scale_y_continuous(name = "TER (ratio)", limits = c(0, 0.30)) +
+    theme(text = element_text(size=18), axis.text = element_text(size=14), legend.position="bottom")
 
 ter_b6 <- ter_frame[ which(ter_frame$Block==6), c("Method", "TER") ]
 aggregate(ter_b6$TER, list(ter_b6$Method), mean)
